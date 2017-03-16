@@ -2521,15 +2521,15 @@ var DragListener = FC.DragListener = Class.extend(ListenerMixin, MouseIgnorerMix
 			this.destroyAutoScroll();
 			this.unbindHandlers();
 
+			this.isInteracting = false;
+			this.handleInteractionEnd(ev, isCancelled);
+
 			// a touchstart+touchend on the same element will result in the following addition simulated events:
 			// mouseover + mouseout + click
 			// let's ignore these bogus events
 			if (this.isTouch) {
 				this.tempIgnoreMouse();
 			}
-
-			this.isInteracting = false;
-			this.handleInteractionEnd(ev, isCancelled);
 		}
 	},
 
@@ -3702,10 +3702,17 @@ var Grid = FC.Grid = Class.extend(ListenerMixin, MouseIgnorerMixin, {
 				enableCursor();
 			},
 			interactionEnd: function(ev, isCancelled) {
+				var preventClick = false;
+				if (this.isTouch) {
+					var touch = ev.originalEvent.chanagedTouches[0];
+					preventClick = dragListener.originX !== touch.clientX ||
+						dragListener.originY !== touch.clientY;
+				}
 				if (!isCancelled) {
 					if (
 						dayClickHit &&
-						!this.isIgnoringMouse // see hack in dayTouchStart
+						!preventClick &&
+						!_this.isIgnoringMouse // see hack in dayTouchStart
 					) {
 						view.triggerDayClick(
 							_this.getHitSpan(dayClickHit),
