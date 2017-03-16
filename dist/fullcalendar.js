@@ -3704,7 +3704,7 @@ var Grid = FC.Grid = Class.extend(ListenerMixin, MouseIgnorerMixin, {
 			interactionEnd: function(ev, isCancelled) {
 				var preventClick = false;
 				if (this.isTouch) {
-					var touch = ev.originalEvent.chanagedTouches[0];
+					var touch = ev.originalEvent.changedTouches[0];
 					preventClick = dragListener.originX !== touch.clientX ||
 						dragListener.originY !== touch.clientY;
 				}
